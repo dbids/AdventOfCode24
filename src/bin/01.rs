@@ -19,23 +19,23 @@ pub fn part_one(input: &str) -> Option<i32> {
 
   // Check equal length of parsed vectors
   assert_eq!(llocs.len(), rlocs.len());
-//  for i in 0..llocs.len() {
-//    println!("{i}: {0}, {1}", llocs[i], rlocs[i]);
-//  }
+  //for i in 0..llocs.len() {
+  //  println!("{i}: {0}, {1}", llocs[i], rlocs[i]);
+  //}
 
   // Sort the two vectors
   llocs.sort();
   rlocs.sort();
-//  for i in 0..llocs.len() {
-//    println!("{i}: {0}, {1}", llocs[i], rlocs[i]);
-//  }
+  //for i in 0..llocs.len() {
+  //  println!("{i}: {0}, {1}", llocs[i], rlocs[i]);
+  //}
 
   // Find the difference
   let mut difference: i32 = 0;
   for i in 0..llocs.len() {
     difference += (llocs[i] - rlocs[i]).abs();
   }
-//  println!("{difference}");
+  //println!("{difference}");
 
   Some(difference)
 }
@@ -58,19 +58,19 @@ pub fn part_two(input: &str) -> Option<i32> {
   // Sort the two vectors
   llocs.sort();
   rlocs.sort();
-//  for i in 0..llocs.len() {
-//    println!("{i}: {0}, {1}", llocs[i], rlocs[i]);
-//  }
+  //for i in 0..llocs.len() {
+  //  println!("{i}: {0}, {1}", llocs[i], rlocs[i]);
+  //}
 
   // Convert vectors to tuple with frequency of occurance
   let llocs_freq: Vec<(i32, i32)> = calc_freq(&llocs);
   let rlocs_freq: Vec<(i32, i32)> = calc_freq(&rlocs);
-//  for i in 0..llocs_freq.len() {
-//    println!("{i}: {0}, {1}", llocs_freq[i].0, llocs_freq[i].1);
-//  }
-//  for i in 0..rlocs_freq.len() {
-//    println!("{i}: {0}, {1}", rlocs_freq[i].0, rlocs_freq[i].1);
-//  }
+  //for i in 0..llocs_freq.len() {
+  //  println!("{i}: {0}, {1}", llocs_freq[i].0, llocs_freq[i].1);
+  //}
+  //for i in 0..rlocs_freq.len() {
+  //  println!("{i}: {0}, {1}", rlocs_freq[i].0, rlocs_freq[i].1);
+  //}
 
   // Calculate similarity score
   let mut similarity: i32 = 0;
@@ -82,7 +82,7 @@ pub fn part_two(input: &str) -> Option<i32> {
       }
     }
   }
-//  println!("\n{similarity}");
+  //println!("\n{similarity}");
 
   Some(similarity)
 }
@@ -93,19 +93,16 @@ fn calc_freq(vec_in: &Vec<i32>) -> Vec<(i32, i32)> {
 
   let mut curr_idx = 0;
   while curr_idx != vec_in.len() {
-
-    if curr_idx == (vec_in.len()-1) {
+    if curr_idx == (vec_in.len() - 1) {
       vec_out.push((vec_in[curr_idx], 1));
       curr_idx += 1;
-    }
-    else if vec_in[curr_idx] != vec_in[curr_idx+1] {
+    } else if vec_in[curr_idx] != vec_in[curr_idx + 1] {
       vec_out.push((vec_in[curr_idx], 1));
       curr_idx += 1;
-    }
-    else {
+    } else {
       let mut freq: usize = 2;
       loop {
-        if vec_in[curr_idx+freq-1] != vec_in[curr_idx+freq] {
+        if vec_in[curr_idx + freq - 1] != vec_in[curr_idx + freq] {
           vec_out.push((vec_in[curr_idx], (i32::try_from(freq).unwrap()))); // Had to type cast due to usize not converting to i32 cleanly
           curr_idx += freq;
           break;
