@@ -52,7 +52,7 @@ pub fn part_two(input: &str) -> Option<u32> {
 
     // If no broken lines, increment and break
     if is_safe {
-      println!("Safe Initially\t\tlevels:{:?}", levels.clone());
+      // println!("Safe Initially\t\tlevels:{:?}", levels.clone());
       num_safe += 1;
       continue 'report;
     }
@@ -65,35 +65,33 @@ pub fn part_two(input: &str) -> Option<u32> {
     (is_safe, _ ) = check_levels(&levels_remove_left);
     // println!("\t...\tlevels_remove_left:{:?}", levels_remove_left.clone());
     if is_safe {
-      println!("Safe Remove Left\tlevels:{:?}\t\tlevels_remove_left:{:?}", levels.clone(), levels_remove_left);
+      // println!("Safe Remove Left\tlevels:{:?}\t\tlevels_remove_left:{:?}", levels.clone(), levels_remove_left);
       num_safe += 1;
       continue 'report;
     }
 
-    if broken_left_idx > 0 {
-      // Remove right of problem
-      let mut levels_remove_right = levels.clone();
-      levels_remove_right.remove(broken_left_idx+1);
-      (is_safe, _ ) = check_levels(&levels_remove_right);
-      if is_safe {
-        println!("Safe Remove Right\tlevels:{:?}\t\tlevels_remove_right:{:?}", levels.clone(), levels_remove_right);
-        num_safe += 1;
-        continue 'report;
-      }
-
-      // Remove first element in case that was the problem
-      let mut levels_remove_first = levels.clone();
-      levels_remove_first.remove(0);
-      (is_safe, _ ) = check_levels(&levels_remove_first);
-      if is_safe {
-        println!("Safe Remove First\tlevels:{:?}\t\tlevels_remove_first:{:?}", levels.clone(), levels_remove_first);
-        num_safe += 1;
-        continue 'report;
-      }
-
+    // Remove right of problem
+    let mut levels_remove_right = levels.clone();
+    levels_remove_right.remove(broken_left_idx+1);
+    (is_safe, _ ) = check_levels(&levels_remove_right);
+    if is_safe {
+      // println!("Safe Remove Right\tlevels:{:?}\t\tlevels_remove_right:{:?}", levels.clone(), levels_remove_right);
+      num_safe += 1;
+      continue 'report;
     }
 
-    println!("Not Safe\t\tlevels:{:?}", levels);
+    // Remove first element in case that was the problem
+    let mut levels_remove_first = levels.clone();
+    levels_remove_first.remove(0);
+    (is_safe, _ ) = check_levels(&levels_remove_first);
+    if is_safe {
+      // println!("Safe Remove First\tlevels:{:?}\t\tlevels_remove_first:{:?}", levels.clone(), levels_remove_first);
+      num_safe += 1;
+      continue 'report;
+    }
+
+
+    // println!("Not Safe\t\tlevels:{:?}", levels);
   }
   Some(num_safe)
 }
