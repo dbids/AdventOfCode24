@@ -22,10 +22,9 @@ pub fn part_one(input: &str) -> Option<u32> {
     };
 
     // Check if line is safe
-    for l_idx in 0..levels.len()-1 {
-      let diff = levels[l_idx] - levels[l_idx+1];
-      if (diff == 0) || (is_decreasing != (diff < 0)) ||
-        (diff.abs() > 3) || (diff.abs() < 1) {
+    for l_idx in 0..levels.len() - 1 {
+      let diff = levels[l_idx] - levels[l_idx + 1];
+      if (diff == 0) || (is_decreasing != (diff < 0)) || (diff.abs() > 3) || (diff.abs() < 1) {
         continue 'report;
       }
     }
@@ -51,7 +50,7 @@ pub fn part_two(input: &str) -> Option<u32> {
 
     // If no broken lines, increment and break
     if is_safe {
-      println!("Safe Initially\t\tlevels:{:?}", levels.clone());
+      // println!("Safe Initially\t\tlevels:{:?}", levels.clone());
       num_safe += 1;
       continue 'report;
     }
@@ -63,13 +62,13 @@ pub fn part_two(input: &str) -> Option<u32> {
       levels_remove_idx.remove(l_idx);
       is_safe = check_levels(&levels_remove_idx);
       if is_safe {
-        println!("Safe Remove Idx\tlevels:{:?}\t\tlevels_remove_idx:{:?}", levels.clone(), levels_remove_idx);
+        // println!("Safe Remove Idx\tlevels:{:?}\t\tlevels_remove_idx:{:?}", levels.clone(), levels_remove_idx);
         num_safe += 1;
         continue 'report;
       }
     }
 
-    println!("Not Safe\t\tlevels:{:?}", levels);
+    // println!("Not Safe\t\tlevels:{:?}", levels);
   }
   Some(num_safe)
 }
@@ -81,10 +80,9 @@ fn check_levels(levels: &Vec<i64>) -> bool {
     Ordering::Greater => false,
     Ordering::Equal => return false,
   };
-  for l_idx in 0..levels.len()-1 {
-    let diff = levels[l_idx] - levels[l_idx+1];
-    if (diff == 0) || (is_decreasing != (diff < 0)) ||
-      (diff.abs() > 3) || (diff.abs() < 1) {
+  for l_idx in 0..levels.len() - 1 {
+    let diff = levels[l_idx] - levels[l_idx + 1];
+    if (diff == 0) || (is_decreasing != (diff < 0)) || (diff.abs() > 3) || (diff.abs() < 1) {
       return false;
     }
   }
