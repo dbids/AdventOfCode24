@@ -4,7 +4,6 @@ advent_of_code::solution!(5);
 use regex::Regex;
 
 pub fn part_one(input: &str) -> Option<u64> {
-
   // Split input into two at blank line
   let Some(split_idx) = input.find("\n\n") else {
     return None;
@@ -26,7 +25,7 @@ pub fn part_one(input: &str) -> Option<u64> {
   let mut mid_sum: u64 = 0;
   'updates: for update in updates_str.split_whitespace() {
     // Get string as a vector
-    let update_vec : Vec<u8> = update
+    let update_vec: Vec<u8> = update
       .split(',')
       .map(|d| d.parse::<u8>().unwrap()) // Maps iter of strings to iter of u8
       .collect::<Vec<u8>>(); //Collects all elements of iter into vector
@@ -35,13 +34,13 @@ pub fn part_one(input: &str) -> Option<u64> {
     for uv_idx in 0..update_vec.len() {
       let r_idx: usize = update_vec[uv_idx] as usize;
       for rule in rules[r_idx].clone().into_iter() {
-        if (&update_vec[0..uv_idx].into_iter().find(|d| **d==rule)).is_some() {
+        if (&update_vec[0..uv_idx].into_iter().find(|d| **d == rule)).is_some() {
           // This rule is broken
           continue 'updates;
         }
       }
     }
-    mid_sum += update_vec[update_vec.len()/2] as u64;
+    mid_sum += update_vec[update_vec.len() / 2] as u64;
   }
   return Some(mid_sum);
 }
@@ -68,7 +67,7 @@ pub fn part_two(input: &str) -> Option<u64> {
   let mut mid_sum: u64 = 0;
   for update in updates_str.split_whitespace() {
     // Get string as a vector
-    let mut update_vec : Vec<u8> = update
+    let mut update_vec: Vec<u8> = update
       .split(',')
       .map(|d| d.parse::<u8>().unwrap()) // Maps iter of strings to iter of u8
       .collect::<Vec<u8>>(); //Collects all elements of iter into vector
@@ -80,7 +79,7 @@ pub fn part_two(input: &str) -> Option<u64> {
       for uv_idx in 0..update_vec.len() {
         let r_idx: usize = update_vec[uv_idx] as usize;
         for rule in rules[r_idx].clone().into_iter() {
-          if let Some(m_idx) = &update_vec[0..uv_idx].iter().position(|&d| d==rule) {
+          if let Some(m_idx) = &update_vec[0..uv_idx].iter().position(|&d| d == rule) {
             // This rule is broken, so fix it
             incorrect_at_first = true;
             valid_update = false;
@@ -96,7 +95,7 @@ pub fn part_two(input: &str) -> Option<u64> {
     }
 
     if incorrect_at_first {
-      mid_sum += update_vec[update_vec.len()/2] as u64;
+      mid_sum += update_vec[update_vec.len() / 2] as u64;
     }
   }
   return Some(mid_sum);
