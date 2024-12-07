@@ -1,13 +1,22 @@
 advent_of_code::solution!(%DAY_NUMBER%);
 
+// ##################### DEPENDENCIES ####################
+
+// ##################### TYPE DEFS #####################
+
+// ##################### HELPER FUNCTIONS ####################
+
+// ##################### PART ONE #####################
 pub fn part_one(input: &str) -> Option<u32> {
   None
 }
 
+// ##################### PART TWO ####################
 pub fn part_two(input: &str) -> Option<u32> {
   None
 }
 
+// ##################### TESTS ###################
 #[cfg(test)]
 mod tests {
   use super::*;
