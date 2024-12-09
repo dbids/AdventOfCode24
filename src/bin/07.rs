@@ -9,7 +9,7 @@ fn concat_nums(a: u64, b: u64) -> u64 {
   a * 10u64.pow(b.ilog10() + 1) + b
 }
 
-fn test_input(input: &str, base: u64, loop_base:usize) -> u64 {
+fn test_input(input: &str, base: u64, loop_base: usize) -> u64 {
   let mut total_calibration: u64 = 0;
   // Iterate over lines
   for equation in input.lines() {
