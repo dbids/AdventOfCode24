@@ -8,41 +8,43 @@ use advent_of_code::template::aoc_cli::check;
 // ##################### TYPE DEFS #####################
 #[derive(Debug, PartialEq, Eq, Clone)]
 struct Point {
-  x: usize,
-  y: usize,
-}
-
-#[derive(Debug, PartialEq, Eq, Clone)]
-struct SignedPoint {
   x: isize,
   y: isize,
 }
-
-// ##################### HELPER FUNCTIONS ####################
-fn inside_bounds(x: isize, y: isize, x_max: usize, y_max: usize) -> bool {
-  return !((x >= x_max as isize) || (y >= y_max as isize) || (y < 0) || (x < 0));
+impl Point {
+  fn inside_bounds(&self, x_max: isize, y_max: isize) -> bool {
+    return !((self.x >= x_max) || (self.y >= y_max) || (self.y < 0) || (self.x < 0));
+  }
 }
 
-// ##################### PART ONE #####################
-pub fn part_one(input: &str) -> Option<u32> {
-  // Get Antennas from input string
-  let mut width: usize = 0;
-  let mut height: usize = 0;
-  let mut antennas: HashMap<char, Vec<Point>> = HashMap::new();
+// ##################### HELPER FUNCTIONS ####################
+fn format_input(
+  input: &str,
+  width: &mut isize,
+  height: &mut isize,
+  antennas: &mut HashMap<char, Vec<Point>>,
+) {
   for (l_idx, line) in input.lines().enumerate() {
-    width = line.len();
-    height += 1;
+    *width = line.len() as isize;
+    *height += 1;
     for (c_idx, c) in line.chars().enumerate() {
       if c != '.' && c != '\n' {
-        //antennas.push(Antenna{x:l_idx, y:c_idx, freq:c,});
-        antennas
-          .entry(c)
-          .or_insert_with(Vec::new)
-          .push(Point { x: l_idx, y: c_idx });
+        antennas.entry(c).or_insert_with(Vec::new).push(Point {
+          x: l_idx as isize,
+          y: c_idx as isize,
+        });
       }
     }
   }
-  //dbg!(antennas, height, width);
+}
+
+// ##################### PART ONE #####################
+pub fn part_one(input: &str) -> Option<usize> {
+  // Get Antennas from input string
+  let mut width: isize = 0;
+  let mut height: isize = 0;
+  let mut antennas: HashMap<char, Vec<Point>> = HashMap::new();
+  format_input(input, &mut width, &mut height, &mut antennas);
 
   // Determine antinodes
   let mut antinodes: Vec<Point> = Vec::new();
@@ -51,26 +53,23 @@ pub fn part_one(input: &str) -> Option<u32> {
     for (l, l_pt) in point.iter().enumerate() {
       for r_pt in point[l + 1..].iter() {
         // Find diff between points
-        let diff_x: isize = r_pt.x as isize - l_pt.x as isize;
-        let diff_y: isize = r_pt.y as isize - l_pt.y as isize;
+        let diff_x: isize = r_pt.x - l_pt.x;
+        let diff_y: isize = r_pt.y - l_pt.y;
 
         // Create check points
-        let check_points: [SignedPoint; 2] = [
-          SignedPoint {
-            x: l_pt.x as isize - diff_x,
-            y: l_pt.y as isize - diff_y,
+        let check_points: [Point; 2] = [
+          Point {
+            x: l_pt.x - diff_x,
+            y: l_pt.y - diff_y,
           },
-          SignedPoint {
-            x: r_pt.x as isize + diff_x,
-            y: r_pt.y as isize + diff_y,
+          Point {
+            x: r_pt.x + diff_x,
+            y: r_pt.y + diff_y,
           },
         ];
         check_points.into_iter().for_each(|cp| {
-          if inside_bounds(cp.x, cp.y, height, width) {
-            let antinode: Point = Point {
-              x: cp.x as usize,
-              y: cp.y as usize,
-            };
+          if cp.inside_bounds(height, width) {
+            let antinode: Point = Point { x: cp.x, y: cp.y };
             if !antinodes.contains(&antinode) {
               antinodes.push(antinode);
             }
@@ -80,7 +79,7 @@ pub fn part_one(input: &str) -> Option<u32> {
     }
   }
 
-  Some(antinodes.len() as u32)
+  Some(antinodes.len())
 }
 
 // ##################### PART TWO ####################
