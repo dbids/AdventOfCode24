@@ -4,6 +4,8 @@ advent_of_code::solution!(9);
 use std::cmp::Ordering;
 use std::collections::VecDeque;
 
+use advent_of_code::template::aoc_cli::check;
+
 // ##################### TYPE DEFS #####################
 #[derive(Debug)]
 struct Metadata {
@@ -17,7 +19,7 @@ fn format_input(input: &str, files: &mut VecDeque<Metadata>, spaces: &mut VecDeq
   let mut counter: usize = 0;
   input
     .chars()
-    .filter(|c| c.is_numeric())
+    .filter(|c| c.is_ascii_digit())
     .map(|c| c.to_digit(10).unwrap() as usize)
     .enumerate()
     .for_each(|(c_idx, c)| {
@@ -38,6 +40,16 @@ fn format_input(input: &str, files: &mut VecDeque<Metadata>, spaces: &mut VecDeq
         counter += c;
       }
     });
+}
+
+fn calc_checksum(files: &VecDeque<Metadata>) -> usize {
+  let mut checksum: usize = 0;
+  for f in files.into_iter() {
+    for offst in 0..f.len {
+      checksum += f.id_num * (f.start + offst);
+    }
+  }
+  return checksum;
 }
 
 // ##################### PART ONE #####################
@@ -102,19 +114,42 @@ pub fn part_one(input: &str) -> Option<usize> {
   }
 
   // Calculate checksum
-  let mut checksum: usize = 0;
-  for f in files.into_iter() {
-    for offst in 0..f.len {
-      checksum += f.id_num * (f.start + offst);
-    }
-  }
-
-  Some(checksum)
+  Some(calc_checksum(&files))
 }
 
 // ##################### PART TWO ####################
-pub fn part_two(input: &str) -> Option<u32> {
-  None
+pub fn part_two(input: &str) -> Option<usize> {
+  // Get input as metadata
+  let mut files: VecDeque<Metadata> = VecDeque::new();
+  let mut spaces: VecDeque<Metadata> = VecDeque::new();
+  format_input(&input, &mut files, &mut spaces);
+
+  // Compress data by file
+  'files: for curr_file in files.iter_mut().rev() {
+    for (cs_idx, curr_space) in spaces.iter_mut().enumerate() {
+      match curr_space.len.cmp(&curr_file.len) {
+        Ordering::Greater => {
+          curr_file.start = curr_space.start;
+          curr_space.start += curr_file.len;
+          curr_space.len -= curr_file.len;
+          continue 'files;
+        }
+        Ordering::Equal => {
+          curr_file.start = curr_space.start;
+          _ = spaces.remove(cs_idx);
+          continue 'files;
+        }
+        Ordering::Less => {}
+      }
+    }
+  }
+
+  //let mut sorted_files = Vec::from(files);
+  //sorted_files.sort_by(|v1, v2| v1.start.cmp(&v2.start));
+  //dbg!(&sorted_files);
+
+  // Calculate checksum
+  Some(calc_checksum(&files))
 }
 
 // ##################### TESTS ###################
@@ -131,6 +166,6 @@ mod tests {
   #[test]
   fn test_part_two() {
     let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-    assert_eq!(result, None);
+    assert_eq!(result, Some(2858));
   }
 }
