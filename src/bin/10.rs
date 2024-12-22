@@ -32,15 +32,14 @@ impl Direction {
     }
   }
   pub fn iterator() -> Iter<'static, Direction> {
-    static DIRECTIONS: [Direction; 4] =
-      [Left, Right, Up, Down];
+    static DIRECTIONS: [Direction; 4] = [Left, Right, Up, Down];
     DIRECTIONS.iter()
   }
 }
 
 // ##################### HELPER FUNCTIONS ####################
 // Get input map and trailheads
-fn parse_input(input : &str) -> (Array2<u8>, Vec<(isize, isize)>){
+fn parse_input(input: &str) -> (Array2<u8>, Vec<(isize, isize)>) {
   // Determine array dimensions
   let mut height: usize = 0;
   let mut width: usize = 0;
@@ -68,7 +67,13 @@ fn parse_input(input : &str) -> (Array2<u8>, Vec<(isize, isize)>){
 }
 
 // Traverse map recursively
-fn traverse_map(x: isize, y: isize, in_dir: Direction, map: &Array2<u8>, trail_ends: &mut HashSet<(isize, isize)>) {
+fn traverse_map(
+  x: isize,
+  y: isize,
+  in_dir: Direction,
+  map: &Array2<u8>,
+  trail_ends: &mut HashSet<(isize, isize)>,
+) {
   // Get next x and y and check zero
   let x_inc: isize = in_dir.get_x_inc();
   let y_inc: isize = in_dir.get_y_inc();
@@ -107,23 +112,22 @@ fn traverse_map(x: isize, y: isize, in_dir: Direction, map: &Array2<u8>, trail_e
   }
 }
 
-
 // ##################### PART ONE #####################
 pub fn part_one(input: &str) -> Option<usize> {
   // Get input as an array of u8 and list of trailheads
   let (map, trailheads) = parse_input(&input);
 
   // Iterate over trailheads and calculate the score for each
-  let mut sum_trailhead_scores: usize = 0;
-  for th in trailheads.into_iter() {
-    let mut trail_ends: HashSet<(isize, isize)> = HashSet::new();
-
-    for &direction in Direction::iterator() {
-      traverse_map(th.0, th.1, direction,  &map, &mut trail_ends);
-    }
-
-    sum_trailhead_scores += trail_ends.len();
-  }
+  let sum_trailhead_scores = trailheads
+    .into_iter()
+    .map(|th| {
+      let mut trail_ends: HashSet<(isize, isize)> = HashSet::new();
+      for &direction in Direction::iterator() {
+        traverse_map(th.0, th.1, direction, &map, &mut trail_ends);
+      }
+      trail_ends.len()
+    })
+    .sum();
 
   Some(sum_trailhead_scores)
 }
