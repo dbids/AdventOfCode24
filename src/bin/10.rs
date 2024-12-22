@@ -73,42 +73,42 @@ fn traverse_map(
   in_dir: Direction,
   map: &Array2<u8>,
   trail_ends: &mut HashSet<(isize, isize)>,
-) {
+) -> usize {
   // Get next x and y and check zero
   let x_inc: isize = in_dir.get_x_inc();
   let y_inc: isize = in_dir.get_y_inc();
   let Some(next_x) = x.checked_add(x_inc) else {
-    return;
+    return 0;
   };
   let Some(next_y) = y.checked_add(y_inc) else {
-    return;
+    return 0;
   };
 
   // Check array bounds and get next spot
   let Some(&next_num) = map.get((next_x as usize, next_y as usize)) else {
-    return;
+    return 0;
   };
 
   // Check for strict increase
   let Some(curr_num) = map.get((x as usize, y as usize)) else {
-    return;
+    return 0;
   };
   if let Some(sub_num) = next_num.checked_sub(*curr_num) {
     if sub_num != 1 {
-      return;
+      return 0;
     }
   } else {
-    return;
+    return 0;
   }
 
   // If next num is 9 return x and y
   if next_num == 9 {
     trail_ends.insert((next_x, next_y));
-    return;
+    return 1;
   } else {
-    for &direction in Direction::iterator() {
-      traverse_map(next_x, next_y, direction, &map, trail_ends);
-    }
+    return Direction::iterator()
+      .map(|&direction| traverse_map(next_x, next_y, direction, &map, trail_ends))
+      .sum();
   }
 }
 
@@ -123,7 +123,7 @@ pub fn part_one(input: &str) -> Option<usize> {
     .map(|th| {
       let mut trail_ends: HashSet<(isize, isize)> = HashSet::new();
       for &direction in Direction::iterator() {
-        traverse_map(th.0, th.1, direction, &map, &mut trail_ends);
+        _ = traverse_map(th.0, th.1, direction, &map, &mut trail_ends);
       }
       trail_ends.len()
     })
@@ -133,8 +133,22 @@ pub fn part_one(input: &str) -> Option<usize> {
 }
 
 // ##################### PART TWO ####################
-pub fn part_two(input: &str) -> Option<u32> {
-  None
+pub fn part_two(input: &str) -> Option<usize> {
+  // Get input as an array of u8 and list of trailheads
+  let (map, trailheads) = parse_input(&input);
+
+  // Iterate over trailheads and calculate the score for each
+  let sum_trailhead_ratings = trailheads
+    .into_iter()
+    .map(|th| {
+      let mut trail_ends: HashSet<(isize, isize)> = HashSet::new();
+      Direction::iterator()
+        .map(|&direction| traverse_map(th.0, th.1, direction, &map, &mut trail_ends))
+        .sum::<usize>()
+    })
+    .sum::<usize>();
+
+  Some(sum_trailhead_ratings)
 }
 
 // ##################### TESTS ###################
@@ -151,6 +165,6 @@ mod tests {
   #[test]
   fn test_part_two() {
     let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-    assert_eq!(result, None);
+    assert_eq!(result, Some(81));
   }
 }
