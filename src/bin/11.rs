@@ -6,15 +6,14 @@ advent_of_code::solution!(11);
 
 // ##################### HELPER FUNCTIONS ####################
 // Blink specified number of times
-fn blink(mut stone: usize, curr_blink: usize, max_blinks: usize) -> usize {
+fn blink(stone: usize, curr_blink: usize, max_blinks: usize) -> usize {
   let mut sum_blinks = 0;
 
   if curr_blink != (max_blinks) {
     // If the stone is engraved with the number `0`,
     // it is replaced by a stone engraved with the number `1`.
     if stone == 0 {
-      stone = 1;
-      sum_blinks += blink(stone, curr_blink + 1, max_blinks);
+      sum_blinks += blink(1, curr_blink + 1, max_blinks);
     }
     // If the stone is engraved with a number that has an *even* number of digits,
     // it is replaced by *two stones*. The left half of the digits are engraved on
@@ -29,8 +28,7 @@ fn blink(mut stone: usize, curr_blink: usize, max_blinks: usize) -> usize {
     // If none of the other rules apply, the stone is replaced by a new stone;
     // the old stone's number *multiplied by 2024* is engraved on the new stone.
     else {
-      stone = stone * 2024;
-      sum_blinks += blink(stone, curr_blink + 1, max_blinks);
+      sum_blinks += blink(stone * 2024, curr_blink + 1, max_blinks);
     }
   } else {
     return 1;
