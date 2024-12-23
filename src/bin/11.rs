@@ -6,34 +6,32 @@ advent_of_code::solution!(11);
 
 // ##################### HELPER FUNCTIONS ####################
 // Blink specified number of times
-fn blink(stone: usize, curr_blink: usize, max_blinks: usize) -> usize {
-  let mut sum_blinks = 0;
-
-  if curr_blink != (max_blinks) {
-    // If the stone is engraved with the number `0`,
-    // it is replaced by a stone engraved with the number `1`.
-    if stone == 0 {
-      sum_blinks += blink(1, curr_blink + 1, max_blinks);
-    }
-    // If the stone is engraved with a number that has an *even* number of digits,
-    // it is replaced by *two stones*. The left half of the digits are engraved on
-    // the new left stone, and the right half of the digits are engraved on the new
-    // right stone. (Don't keep leading zeros).
-    else if (stone.ilog10() + 1) % 2 == 0 {
-      let s_str = stone.to_string();
-      let (l_str, r_str) = s_str.split_at(s_str.len() / 2);
-      sum_blinks += blink(l_str.parse::<usize>().unwrap(), curr_blink + 1, max_blinks);
-      sum_blinks += blink(r_str.parse::<usize>().unwrap(), curr_blink + 1, max_blinks);
-    }
-    // If none of the other rules apply, the stone is replaced by a new stone;
-    // the old stone's number *multiplied by 2024* is engraved on the new stone.
-    else {
-      sum_blinks += blink(stone * 2024, curr_blink + 1, max_blinks);
-    }
-  } else {
+fn blink(stone: usize, blinks_left: usize) -> usize {
+  if blinks_left == 0 {
     return 1;
   }
 
+  let mut sum_blinks = 0;
+  // If the stone is engraved with the number `0`,
+  // it is replaced by a stone engraved with the number `1`.
+  if stone == 0 {
+    sum_blinks += blink(1, blinks_left -1);
+  }
+  // If the stone is engraved with a number that has an *even* number of digits,
+  // it is replaced by *two stones*. The left half of the digits are engraved on
+  // the new left stone, and the right half of the digits are engraved on the new
+  // right stone. (Don't keep leading zeros).
+  else if (stone.ilog10() + 1) % 2 == 0 {
+    let s_str = stone.to_string();
+    let (l_str, r_str) = s_str.split_at(s_str.len() / 2);
+    sum_blinks += blink(l_str.parse::<usize>().unwrap(), blinks_left - 1);
+    sum_blinks += blink(r_str.parse::<usize>().unwrap(), blinks_left - 1);
+  }
+  // If none of the other rules apply, the stone is replaced by a new stone;
+  // the old stone's number *multiplied by 2024* is engraved on the new stone.
+  else {
+    sum_blinks += blink(stone * 2024, blinks_left - 1);
+  }
   return sum_blinks;
 }
 
@@ -49,7 +47,7 @@ pub fn part_one(input: &str) -> Option<usize> {
   Some(
     stones
       .into_iter()
-      .map(|stone| blink(stone, 0, 25))
+      .map(|stone| blink(stone, 25))
       .sum::<usize>(),
   )
 }
@@ -66,7 +64,7 @@ pub fn part_two(input: &str) -> Option<usize> {
   Some(
     stones
       .into_iter()
-      .map(|stone| blink(stone, 0, 75))
+      .map(|stone| blink(stone, 75))
       .sum::<usize>(),
   )
 }
