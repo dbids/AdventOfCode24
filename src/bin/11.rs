@@ -15,7 +15,7 @@ fn blink(stone: usize, blinks_left: usize) -> usize {
   // If the stone is engraved with the number `0`,
   // it is replaced by a stone engraved with the number `1`.
   if stone == 0 {
-    sum_blinks += blink(1, blinks_left -1);
+    sum_blinks += blink(1, blinks_left - 1);
   }
   // If the stone is engraved with a number that has an *even* number of digits,
   // it is replaced by *two stones*. The left half of the digits are engraved on
